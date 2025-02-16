@@ -16,6 +16,7 @@ class RSVP(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     attending = db.Column(db.Boolean, nullable=False)
+    food_allergy = db.Column(db.String(120), nullable=False)
 
 @app.route('/rsvp', methods=['POST'])
 def rsvp():
@@ -23,7 +24,8 @@ def rsvp():
     name = data.get('name')
     email = data.get('email')
     attending = data.get('attending')
-    new_rsvp = RSVP(name=name, email=email, attending=attending)
+    food_allergy = data.get('food_allergy')
+    new_rsvp = RSVP(name=name, email=email, attending=attending, food_allergy=food_allergy)
     db.session.add(new_rsvp)
     db.session.commit()
     return jsonify({'message': 'RSVP received'}), 200
@@ -32,10 +34,10 @@ def rsvp():
 def download_csv():
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['id', 'name', 'email', 'attending'])
+    writer.writerow(['id', 'name', 'email', 'attending', 'food_allergy'])
     rsvps = RSVP.query.all()
     for rsvp in rsvps:
-        writer.writerow([rsvp.id, rsvp.name, rsvp.email, rsvp.attending])
+        writer.writerow([rsvp.id, rsvp.name, rsvp.email, rsvp.attending, rsvp.food_allergy])
     output.seek(0)
     byte_output = io.BytesIO(output.getvalue().encode())
     return send_file(byte_output, mimetype='text/csv', download_name='rsvp.csv', as_attachment=True)
