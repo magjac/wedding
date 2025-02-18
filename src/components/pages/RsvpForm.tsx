@@ -11,6 +11,7 @@ interface RsvpFormProps {
   const [email, setEmail] = useState<string>('');
   const [attending, setAttending] = useState<boolean>(false);
   const [foodAllergy, setFoodAllergy] = useState<string>('');
+  const [numPeople, setNumPeople] = useState<number>(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +37,8 @@ interface RsvpFormProps {
     }
   };
 
+  const numPeopleOptions = Array.from({ length: 10 }, (_, i) => i);
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -47,33 +50,54 @@ interface RsvpFormProps {
           required
         />
       </div>
-      <div>
-        <label>Name:</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Attending:</label>
-        <input
-          type="checkbox"
-          checked={attending}
-          onChange={(e) => setAttending(e.target.checked)}
-        />
-      </div>
-      {attending &&
+      {numPeople > 0 &&
         <div>
-          <label>Matallergi:</label>
-          <input
-            type="text"
-            value={foodAllergy}
-            onChange={(e) => setFoodAllergy(e.target.value)}
-          />
+          <label>Antal personer:</label>
+          <select
+            name="numPeople"
+            id="numPeople"
+            value={numPeople}
+            onChange={(e) => setNumPeople(+e.target.value)}
+          >
+            {numPeopleOptions.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
         </div>
       }
+      {[...Array(numPeople)].map((_, i) =>
+        <div key={i}>
+          <div>
+            <label>Name:</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Attending:</label>
+            <input
+              type="checkbox"
+              checked={attending}
+              onChange={(e) => setAttending(e.target.checked)}
+            />
+          </div>
+          {attending &&
+            <div>
+              <label>Matallergi:</label>
+              <input
+                type="text"
+                value={foodAllergy}
+                onChange={(e) => setFoodAllergy(e.target.value)}
+              />
+            </div>
+          }
+        </div>
+      )}
       <button type="submit">Submit</button>
     </form>
   );
