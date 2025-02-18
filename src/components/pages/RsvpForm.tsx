@@ -37,10 +37,35 @@ interface RsvpFormProps {
     }
   };
 
+  const handleFetch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${apiUrl}/fetch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Fetch received:', result);
+        const n = result.length == 0 ? 1 : result.length;
+        setNumPeople(n)
+      } else {
+        console.error('Error:', result);
+        alert('Failed to submit Fetch.');
+      }
+    } catch (error) {
+      console.error('Error submitting Fetch:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
   const numPeopleOptions = Array.from({ length: 10 }, (_, i) => i);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={numPeople == 0 ? handleFetch : handleSubmit}>
       <div>
         <label>Email:</label>
         <input

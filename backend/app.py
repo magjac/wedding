@@ -18,6 +18,23 @@ class RSVP(db.Model):
     attending = db.Column(db.Boolean, nullable=False)
     food_allergy = db.Column(db.String(120), nullable=False)
 
+@app.route('/fetch', methods=['POST'])
+def fetch():
+    data = request.json
+    email = data.get('email')
+    posts = db.session.query(RSVP).filter(RSVP.email == email).all()
+
+    result = [
+        {
+          "id": post.id,
+          "name": post.name,
+          "email": post.email,
+          "attending": post.attending,
+          "food_allergy": post.food_allergy
+        } for post in posts]
+
+    return jsonify(result)
+
 @app.route('/rsvp', methods=['POST'])
 def rsvp():
     data = request.json
