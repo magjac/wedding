@@ -50,6 +50,8 @@ def send_confirmation_email(email, rsvps, new):
     housing_text = 'Ja' if housing else 'Nej'
     boat_to = rsvp["boat_to"]
     boat_to_text = 'Ja' if boat_to else 'Nej'
+    boat_from = rsvp["boat_from"]
+    boat_from_text = 'Ja' if boat_from else 'Nej'
     food_preferences_text = f"{food_allergy}" if attending else ""
     body += f"""Namn: {name}
 <br/>
@@ -58,6 +60,7 @@ Kommer på bröllopet: {attending_yes_no}
 Kostpreferenser: {food_preferences_text}
 Bor på det bokade boendet: {housing_text}
 Reser med bokad båt till Arholma: {boat_to_text}
+Reser med bokad båt från Arholma: {boat_from_text}
 <br/>
 <br/>
 """
@@ -72,6 +75,7 @@ class RSVP(db.Model):
     attending = db.Column(db.Boolean, nullable=False)
     housing = db.Column(db.Boolean, nullable=False)
     boat_to = db.Column(db.Boolean, nullable=False)
+    boat_from = db.Column(db.Boolean, nullable=False)
     food_allergy = db.Column(db.String(120), nullable=False)
 
     __table_args__ = (UniqueConstraint('name', 'email', name='_name_email_uc'),)
@@ -90,6 +94,7 @@ def fetch():
           "attending": post.attending,
           "housing": post.housing,
           "boat_to": post.boat_to,
+          "boat_from": post.boat_from,
           "food_allergy": post.food_allergy
         } for post in posts]
 
@@ -107,6 +112,7 @@ def rsvp():
       attending = rsvp_data.get('attending')
       housing = rsvp_data.get('housing')
       boat_to = rsvp_data.get('boat_to')
+      boat_from = rsvp_data.get('boat_from')
       food_allergy = rsvp_data.get('food_allergy')
 
       if id is not None:
@@ -118,6 +124,7 @@ def rsvp():
             rsvp_to_update.attending = attending
             rsvp_to_update.housing = housing
             rsvp_to_update.boat_to = boat_to
+            rsvp_to_update.boat_from = boat_from
             rsvp_to_update.food_allergy = food_allergy
             db.session.commit()
       else:
@@ -127,6 +134,7 @@ def rsvp():
           attending=attending,
           housing=housing,
           boat_to=boat_to,
+          boat_from=boat_from,
           food_allergy=food_allergy
         )
         db.session.add(new_rsvp)
@@ -148,6 +156,7 @@ def download_csv():
         'attending',
         'housing',
         'boat_to',
+        'boat_from',
         'food_allergy',
       ]
     )
@@ -161,6 +170,7 @@ def download_csv():
             rsvp.attending,
             rsvp.housing,
             rsvp.boat_to,
+            rsvp.boat_from,
             rsvp.food_allergy
           ]
         )
