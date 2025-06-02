@@ -107,7 +107,12 @@ def rsvp():
             rsvp_to_update.food_allergy = food_allergy
             db.session.commit()
       else:
-        new_rsvp = RSVP(name=name, email=email, attending=attending, food_allergy=food_allergy)
+        new_rsvp = RSVP(
+          name=name,
+          email=email,
+          attending=attending,
+          food_allergy=food_allergy
+        )
         db.session.add(new_rsvp)
         db.session.commit()
 
@@ -119,10 +124,26 @@ def rsvp():
 def download_csv():
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['id', 'name', 'email', 'attending', 'food_allergy'])
+    writer.writerow(
+      [
+        'id',
+        'name',
+        'email',
+        'attending',
+        'food_allergy',
+      ]
+    )
     rsvps = RSVP.query.all()
     for rsvp in rsvps:
-        writer.writerow([rsvp.id, rsvp.name, rsvp.email, rsvp.attending, rsvp.food_allergy])
+        writer.writerow(
+          [
+            rsvp.id,
+            rsvp.name,
+            rsvp.email,
+            rsvp.attending,
+            rsvp.food_allergy
+          ]
+        )
     output.seek(0)
     byte_output = io.BytesIO(output.getvalue().encode())
     return send_file(byte_output, mimetype='text/csv', download_name='rsvp.csv', as_attachment=True)
