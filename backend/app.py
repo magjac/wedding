@@ -46,12 +46,15 @@ def send_confirmation_email(email, rsvps, new):
     attending = rsvp["attending"]
     food_allergy = rsvp["food_allergy"]
     attending_yes_no = 'Ja' if attending else 'Nej'
+    housing = rsvp["housing"]
+    housing_text = 'Ja' if housing else 'Nej'
     food_preferences_text = f"{food_allergy}" if attending else ""
     body += f"""Namn: {name}
 <br/>
 Kommer på bröllopet: {attending_yes_no}
 <br/>
 Kostpreferenser: {food_preferences_text}
+Bor på det bokade boendet: {housing_text}
 <br/>
 <br/>
 """
@@ -64,6 +67,7 @@ class RSVP(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     attending = db.Column(db.Boolean, nullable=False)
+    housing = db.Column(db.Boolean, nullable=False)
     food_allergy = db.Column(db.String(120), nullable=False)
 
     __table_args__ = (UniqueConstraint('name', 'email', name='_name_email_uc'),)
@@ -80,6 +84,7 @@ def fetch():
           "name": post.name,
           "email": post.email,
           "attending": post.attending,
+          "housing": post.housing,
           "food_allergy": post.food_allergy
         } for post in posts]
 
@@ -95,6 +100,7 @@ def rsvp():
       name = rsvp_data.get('name')
       email = rsvp_data.get('email')
       attending = rsvp_data.get('attending')
+      housing = rsvp_data.get('housing')
       food_allergy = rsvp_data.get('food_allergy')
 
       if id is not None:
@@ -104,6 +110,7 @@ def rsvp():
             rsvp_to_update.name = name
             rsvp_to_update.email = email
             rsvp_to_update.attending = attending
+            rsvp_to_update.housing = housing
             rsvp_to_update.food_allergy = food_allergy
             db.session.commit()
       else:
@@ -111,6 +118,7 @@ def rsvp():
           name=name,
           email=email,
           attending=attending,
+          housing=housing,
           food_allergy=food_allergy
         )
         db.session.add(new_rsvp)
@@ -130,6 +138,7 @@ def download_csv():
         'name',
         'email',
         'attending',
+        'housing',
         'food_allergy',
       ]
     )
@@ -141,6 +150,7 @@ def download_csv():
             rsvp.name,
             rsvp.email,
             rsvp.attending,
+            rsvp.housing,
             rsvp.food_allergy
           ]
         )
