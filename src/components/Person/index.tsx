@@ -48,6 +48,24 @@ const PersonComponent: React.FC<PersonProps> = ({
 
       {person.attending && (
         <div>
+          <div className="radio-buttons">
+            <RadioButton
+              label="Jag bor på bokat boende"
+              name={`housing-${index}`} // Unique name for each person
+              value="yes"
+              checked={person.housing}
+              onChange={() => updatePerson(index, { ...person, housing: true })}
+            />
+            <RadioButton
+              label="Jag kommer inte"
+              name={`housing-${index}`} // Unique name for each person
+              value="no"
+              checked={
+                person.housing === undefined ? undefined : !person.housing
+              }
+              onChange={() => updatePerson(index, { ...person, housing: false })}
+            />
+          </div>
           <InputField
             name="foodPrefererence"
             label="Matpreferenser"

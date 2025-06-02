@@ -15,6 +15,7 @@ export interface Person {
   name: string;
   email: string;
   attending: boolean | undefined;
+  housing: boolean | undefined;
   foodAllergy: string;
 }
 
@@ -23,6 +24,7 @@ interface RawPerson {
   name: string;
   email: string;
   attending: boolean | undefined;
+  housing: boolean | undefined;
   food_allergy: string;
 }
 
@@ -37,6 +39,7 @@ function RsvpForm({ apiUrl, hideForm }: RsvpFormProps) {
     name: '',
     email: email,
     attending: undefined,
+    housing: undefined,
     foodAllergy: '',
   };
 
@@ -73,6 +76,7 @@ function RsvpForm({ apiUrl, hideForm }: RsvpFormProps) {
         name: person.name,
         email,
         attending: person.attending,
+        housing: person.housing,
         food_allergy: person.foodAllergy,
       }));
       const response = await fetch(`${apiUrl}/rsvp`, {
